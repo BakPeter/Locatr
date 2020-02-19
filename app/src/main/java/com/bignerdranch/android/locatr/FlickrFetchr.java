@@ -20,7 +20,7 @@ public class FlickrFetchr {
 
     private static final String TAG = FlickrFetchr.class.getSimpleName();
     private static final String API_KEY = "f4e0e510e3caba118b98d195406497c0";
-    private static final String FETCH_RECENTS_METHOD = "flickr.photos.getRecent";
+    private static final String FETCH_RECENT_METHOD = "flickr.photos.getRecent";
     private static final String SEARCH_METHOD = "flickr.photos.search";
     public static final Uri ENDPOINT = Uri
             .parse("https://api.flickr.com/services/rest/")
@@ -28,7 +28,7 @@ public class FlickrFetchr {
             .appendQueryParameter("api_key", API_KEY)
             .appendQueryParameter("format", "json")
             .appendQueryParameter("nojsoncallback", "1")
-            .appendQueryParameter("extras", "url_s")
+            .appendQueryParameter("extras", "url_s, geo")
             .build();
 
     public byte[] getUrlBytes(String urlSpec) throws IOException {
@@ -62,7 +62,7 @@ public class FlickrFetchr {
     }
 
     public List<GalleryItem> fetchRecentPhotos() {
-        String url = buildUrl(FETCH_RECENTS_METHOD, null);
+        String url = buildUrl(FETCH_RECENT_METHOD, null);
         return downloadGalleryItems(url);
     }
 
@@ -132,6 +132,9 @@ public class FlickrFetchr {
 
             item.setUrl(photoJsonObject.getString("url_s"));
             item.setOwner(photoJsonObject.getString("owner"));
+            item.setLat(photoJsonObject.getDouble("latitude"));
+            item.setLon(photoJsonObject.getDouble("longitude"));
+
             items.add(item);
         }
     }
