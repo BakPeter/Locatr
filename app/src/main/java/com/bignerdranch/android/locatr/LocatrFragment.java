@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -39,10 +40,9 @@ public class LocatrFragment extends Fragment {
     private static final String PERMISSION_DIALOG = "permission_dialog";
 
     private ImageView mImageView;
+    private ProgressBar mProgressBar;
 
     private GoogleApiClient mClient;
-
-    private boolean mPermissionReqeusted = false;
 
     public static LocatrFragment newInstance() {
         return new LocatrFragment();
@@ -76,6 +76,7 @@ public class LocatrFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_locator, container, false);
 
         mImageView = view.findViewById(R.id.image);
+        mProgressBar = view.findViewById(R.id.progress_bar);
 
         return view;
     }
@@ -164,6 +165,12 @@ public class LocatrFragment extends Fragment {
         private Bitmap mBitmap;
 
         @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            mProgressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
         protected Void doInBackground(Location... locations) {
             FlickrFetchr fetchr = new FlickrFetchr();
             List<GalleryItem> items = fetchr.searchPhotos(locations[0]);
@@ -185,6 +192,9 @@ public class LocatrFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Void aVoid) {
+            mProgressBar.setVisibility(View.GONE);
+
+            mImageView.setVisibility(View.VISIBLE);
             mImageView.setImageBitmap(mBitmap);
         }
     }
