@@ -36,10 +36,13 @@ public class LocatrFragment extends Fragment {
             Manifest.permission.ACCESS_COARSE_LOCATION
     };
     private static final int REQUEST_LOCATION_PERMISSION = 0;
+    private static final String PERMISSION_DIALOG = "permission_dialog";
 
     private ImageView mImageView;
 
     private GoogleApiClient mClient;
+
+    private boolean mPermissionReqeusted = false;
 
     public static LocatrFragment newInstance() {
         return new LocatrFragment();
@@ -122,6 +125,10 @@ public class LocatrFragment extends Fragment {
             case REQUEST_LOCATION_PERMISSION:
                 if (hasLocationPermission()) {
                     findImage();
+                } else {
+                    if (shouldShowRequestPermissionRationale(LOCATION_PERMISSIONS[0])) {
+                        (new PermissionRationalDialog(getActivity())).show(getFragmentManager(), PERMISSION_DIALOG);
+                    }
                 }
                 break;
             default:
@@ -148,6 +155,7 @@ public class LocatrFragment extends Fragment {
     private boolean hasLocationPermission() {
         int result = ContextCompat
                 .checkSelfPermission(getActivity(), LOCATION_PERMISSIONS[0]);
+
         return result == PackageManager.PERMISSION_GRANTED;
     }
 
